@@ -45,7 +45,7 @@
     <h1>Based64 (no frills base 64 encoder/decoder)</h1>
     <hr>
     <h3>Input</h3>
-    <textarea placeholder="Type or Paste text then Type Ctrl+D to base64 decode or Ctrl+E to base64 encode, or use buttons" id="input" rows="10"></textarea>
+    <textarea placeholder="Type or Paste text, use button to toggle between encode and decode mode (or type ctrl+d)" id="input" rows="10"></textarea>
     <h3>Output</h3>
     <textarea id="output" rows="10"></textarea>
     <h3>Debug Output</h3>
@@ -79,14 +79,16 @@
       debugOutput.value = ""
       isInEncodeMode ? encodeVal() : decodeVal()
     }
-
-    modeChangeBtn.addEventListener('click', () => {
+    function toggleMode() {
       isInEncodeMode = !isInEncodeMode
       modeDisplay.innerHTML = isInEncodeMode ? "Encode" : "Decode"
       redoDecodeOrEncode()
-    })
+    }
+
+    modeChangeBtn.addEventListener('click', toggleMode.bind(this))
 
     input.addEventListener('keyup', redoDecodeOrEncode.bind(this))
+    input.addEventListener('keyup', (event) => { if(event.keyCode == 68 && event.ctrlKey) toggleMode()})
 
     
   </script>
