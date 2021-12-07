@@ -11,14 +11,20 @@
       flex-direction: column;
       padding: 1rem;
     }
-    button {
+    button, #modeDisplay {
       width: 100px;
       align-self: flex-end;
       margin-top: .25rem;
       font-size: large;
       border-radius: .5rem;
       background-color: azure;
+      color: black;
     }
+    #modeDisplay {
+      padding: 0.25rem;
+      box-sizing: border-box;
+    }
+
     textarea {
       width:100%;
     }
@@ -28,6 +34,9 @@
     body {
       background: #333;
       color: azure;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
   </style>
 </head>
@@ -36,19 +45,24 @@
     <h1>Based64 (no frills base 64 encoder/decoder)</h1>
     <hr>
     <h3>Input</h3>
-    <textarea placeholder="Type or Paste text then Type Ctrl+D to base64 decode or Ctrl+E to base64 decode, or use buttons" id="input" rows="10"></textarea>
+    <textarea placeholder="Type or Paste text then Type Ctrl+D to base64 decode or Ctrl+E to base64 encode, or use buttons" id="input" rows="10"></textarea>
     <h3>Output</h3>
     <textarea id="output" rows="10"></textarea>
+    <h3>Debug Output</h3>
+    <textarea id="debugOutput" rows="2"></textarea>
   
-    <button id="encode">Encode</button>
-    <button id="decode">Decode</button>
+    <span id="modeDisplay">Decode</span>
+    <button id="changeMode">Change Mode</button>
   </div>
   
   <script>
     const input = document.getElementById('input')
     const output = document.getElementById('output')
-    const encodeBtn = document.getElementById('encode')
-    const decodeBtn = document.getElementById('decode')
+    const debugOutput = document.getElementById('debugOutput')
+    const modeChangeBtn = document.getElementById('changeMode')
+    const modeDisplay = document.getElementById('modeDisplay')
+
+    let isInEncodeMode = false // when false is in decode mode, when true is in encode mode
 
     function encodeVal() {
       output.value = btoa(input.value)
@@ -57,25 +71,23 @@
       try {
         output.value = atob(input.value)
       } catch (error) {
-        alert("Value couldn't be decoded, did you mean to encode, probably contains invalid characters for base64 decoding")
+        debugOutput.value = error
+        debugOutput.value += "Likely the input contains non-base 64 characters: https://base64.guru/learn/base64-characters"
       }
     }
+    function redoDecodeOrEncode() {
+      debugOutput.value = ""
+      isInEncodeMode ? encodeVal() : decodeVal()
+    }
 
-    encodeBtn.addEventListener('click', () => {
-      encodeVal()
+    modeChangeBtn.addEventListener('click', () => {
+      isInEncodeMode = !isInEncodeMode
+      modeDisplay.innerHTML = isInEncodeMode ? "Encode" : "Decode"
+      redoDecodeOrEncode()
     })
-    decodeBtn.addEventListener('click', () => {
-      decodeVal()
-    })
-    input.addEventListener('keyup', (event) => {
-      if( event.ctrlKey ) {
-        if(event.keyCode == '68') {
-          decodeVal()
-        } else if(event.keyCode == '69') { // Nice
-          encodeVal()
-        }
-      }
-    })
+
+    input.addEventListener('keyup', redoDecodeOrEncode.bind(this))
+
     
   </script>
 </body>
