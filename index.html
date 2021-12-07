@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Based64</title>
+  <style>
+    .container {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+    button {
+      width: 100px;
+      align-self: flex-end;
+      margin-top: .25rem;
+      font-size: large;
+      border-radius: .5rem;
+      background-color: azure;
+    }
+    textarea {
+      width:100%;
+    }
+    hr {
+      width: 100%;
+    }
+    body {
+      background: #333;
+      color: azure;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Based64 (no frills base 64 encoder/decoder)</h1>
+    <hr>
+    <h3>Input</h3>
+    <textarea placeholder="Type or Paste text then Type Ctrl+D to base64 decode or Ctrl+E to base64 decode, or use buttons" id="input" rows="10"></textarea>
+    <h3>Output</h3>
+    <textarea id="output" rows="10"></textarea>
+  
+    <button id="encode">Encode</button>
+    <button id="decode">Decode</button>
+  </div>
+  
+  <script>
+    const input = document.getElementById('input')
+    const output = document.getElementById('output')
+    const encodeBtn = document.getElementById('encode')
+    const decodeBtn = document.getElementById('decode')
+
+    function encodeVal() {
+      output.value = btoa(input.value)
+    }
+    function decodeVal() {
+      try {
+        output.value = atob(input.value)
+      } catch (error) {
+        alert("Value couldn't be decoded, did you mean to encode, probably contains invalid characters for base64 decoding")
+      }
+    }
+
+    encodeBtn.addEventListener('click', () => {
+      encodeVal()
+    })
+    decodeBtn.addEventListener('click', () => {
+      decodeVal()
+    })
+    input.addEventListener('keyup', (event) => {
+      if( event.ctrlKey ) {
+        if(event.keyCode == '68') {
+          decodeVal()
+        } else if(event.keyCode == '69') { // Nice
+          encodeVal()
+        }
+      }
+    })
+    
+  </script>
+</body>
+</html>
